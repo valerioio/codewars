@@ -1,0 +1,1 @@
+moonRating=r=>('o'.repeat((r+=.5)/2)+(r&1?'c':'')).padEnd(5,'x')
