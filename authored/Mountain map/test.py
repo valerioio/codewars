@@ -26,9 +26,9 @@ def to_mountain_check(mat):
             highest -= 1
     return mat
 
-def random_mat(m, l, h):
-    r, c = randint(l, h), randint(l, h)
-    return [[randint(0, m) for i in range(c)] for j in range(r)]
+def random_mat(max_height, min_size, max_size):
+    rows, cols = randint(min_size, max_size), randint(min_size, max_size)
+    return [[randint(0, max_height) for i in range(cols)] for j in range(rows)]
 def copy_of(m):
     return [[n for n in r] for r in m]
 
@@ -82,26 +82,9 @@ def sol_test():
         for i in range(9):
             random = random_mat(2, 4, 9)
             act(to_mountain(copy_of(random)), to_mountain_check(random))
-            random = random_mat(9, 49, 99)
+            random = random_mat(9, 89, 99)
             act(to_mountain(copy_of(random)), to_mountain_check(random))
-            random = random_mat(99, 49, 99)
+            random = random_mat(99, 89, 99)
             act(to_mountain(copy_of(random)), to_mountain_check(random))
-            random = random_mat(4, 49, 99)
-            for h in range(randint(1, 9)):
-                for j in range(len(random)):
-                    for k in range(len(random[0])):
-                        random[j][k] = randint(1, 19)
-            act(to_mountain(copy_of(random)), to_mountain_check(random))
-            random = random_mat(2, 79, 99)
-            for h in range(randint(1, 2)):
-                for j in range(len(random)):
-                    for k in range(len(random[0])):
-                        random[j][k] = randint(29, 99)
-            act(to_mountain(copy_of(random)), to_mountain_check(random))
-            random = list(range(9801))
-            shuffle(random)
-            random = [random[i:i+99] for i in range(0, len(random), 99)]
-            act(to_mountain(copy_of(random)), to_mountain_check(random))
-            n = randint(0, 99)
-            random = [[n+i+99*j for i in range(99)] for j in range(99)]
+            random = random_mat(9999, 89, 99)
             act(to_mountain(copy_of(random)), to_mountain_check(random))
