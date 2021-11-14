@@ -32,59 +32,72 @@ def random_mat(max_height, min_size, max_size):
 def copy_of(m):
     return [[n for n in r] for r in m]
 
-@test.describe("Solution test")
+@test.describe("Solution tests")
 def sol_test():
-    def act(matrix, expected):
-        actual = to_mountain(matrix)
-        test.assert_equals(actual, expected, str(matrix))
+    def act(input):
+        actual = to_mountain(copy_of(input))
+        expected = to_mountain_check(copy_of(input))
+        test.assert_equals(actual, expected, f"input: str(input)" if len(input)<10 else None)
 
     @test.it("Fixed tests")
     def fixed_tests():
-        act([[1]], [[1]])
-        act([[1, 1]], [[1, 1]])
-        act([[1, 2]], [[1, 2]])
-        act([[1, 3]], [[2, 3]])
-        act([[2, 2, 1, 2],
-             [1, 0, 2, 1],
-             [1, 0, 1, 2],
-             [1, 2, 2, 1]],
-            [[2, 2, 1, 2],
-             [1, 1, 2, 1],
-             [1, 1, 1, 2],
-             [1, 2, 2, 1]])
-        act([[2, 2, 1, 2],
-             [1, 0, 2, 1],
-             [1, 0, 1, 2],
-             [1, 2, 2, 4]],
-            [[2, 2, 1, 2],
-             [1, 2, 2, 2],
-             [1, 2, 3, 3],
-             [1, 2, 3, 4]])
-        act([[2, 2, 1, 2],
-             [1, 0, 2, 1],
-             [1, 0, 4, 2],
-             [1, 2, 2, 4]],
-            [[2, 2, 2, 2],
-             [2, 3, 3, 3],
-             [2, 3, 4, 3],
-             [2, 3, 3, 4]])
-        act([[1, 2, 4, 2],
-             [3, 3, 3, 4],
-             [1, 2, 4, 2],
-             [4, 4, 1, 3]],
-            [[2, 3, 4, 3],
-             [3, 3, 3, 4],
-             [3, 3, 4, 3],
-             [4, 4, 3, 3]])
+        act([[1]])
+        act([[1, 1]])
+        act([[1, 2]])
+        act([[1, 3]])
+        act([[2, 2, 1, 2],[1, 0, 2, 1],[1, 0, 1, 2],[1, 2, 2, 1]])
+        act([[2, 2, 1, 2],[1, 0, 2, 1],[1, 0, 1, 2],[1, 2, 2, 4]])
+        act([[2, 2, 1, 2],[1, 0, 2, 1],[1, 0, 4, 2],[1, 2, 2, 4]])
+        act([[1, 2, 4, 2],[3, 3, 3, 4],[1, 2, 4, 2],[4, 4, 1, 3]])
 
-    @test.it("Random tests")
+    @test.it("Random tests of small matrices (between 4 x 4 and 9 x 9) and small numbers (0 to 9)")
     def random_test():
         for i in range(9):
-            random = random_mat(2, 4, 9)
-            act(to_mountain(copy_of(random)), to_mountain_check(random))
-            random = random_mat(9, 89, 99)
-            act(to_mountain(copy_of(random)), to_mountain_check(random))
-            random = random_mat(99, 89, 99)
-            act(to_mountain(copy_of(random)), to_mountain_check(random))
-            random = random_mat(9999, 89, 99)
-            act(to_mountain(copy_of(random)), to_mountain_check(random))
+            act(random_mat(4, 4, 9))
+            act(random_mat(9, 4, 9))
+
+    @test.it("Random tests of big matrices (up to 99 x 99) and medium numbers (0 to 99)")
+    def random_test():
+        for i in range(9):
+            act(random_mat(9, 89, 99))
+            act(random_mat(99, 89, 99))
+
+    @test.it("Random tests of big matrices (up to 99 x 99) and big numbers (up to 9999)")
+    def random_test():
+        for i in range(9):
+            act(random_mat(9999, 89, 99))
+
+    @test.it("Random tests of big matrices and all the numbers between 0 and 9801 shuffled")
+    def random_test():
+        for i in range(9):
+            random = list(range(9801))
+            shuffle(random)
+            random = [random[i:i+99] for i in range(0, len(random), 99)]
+            act(random)
+
+    @test.it("Random tests of big matrices and all different numbers in increasing order")
+    def random_test():
+        for i in range(9):
+            n = randint(0, 99)
+            random = [[n+i+99*j for i in range(99)] for j in range(99)]
+            act(random)
+
+#     @test.it("Random tests of big matrices with many small numbers and few medium numbers")
+#     def random_test():
+#         for i in range(4):
+#             random = random_mat(9, 79, 99)
+#             for h in range(randint(1, 9)):
+#                 for j in range(len(random)):
+#                     for k in range(len(random[0])):
+#                         random[j][k] = randint(1, 19)
+#             act(random)
+
+#     @test.it("Random tests of big matrices with many small numbers and few big numbers")
+#     def random_test():
+#         for i in range(4):
+#             random = random_mat(9, 79, 99)
+#             for h in range(randint(1, 2)):
+#                 for j in range(len(random)):
+#                     for k in range(len(random[0])):
+#                         random[j][k] = randint(79, 99)
+#             act(random)

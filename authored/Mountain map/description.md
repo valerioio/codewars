@@ -27,4 +27,4 @@ to_mountain([[2, 2, 1, 2],
 * 0 <= n < 10000 and n is a integer for each number n in the matrix
 
 ### Tests
-8 fixed tests and 36 random tests
+8 fixed tests and 63 random tests
