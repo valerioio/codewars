@@ -1,103 +1,103 @@
 import codewars_test as test
+from solution import to_mountain
 from collections import defaultdict
-from itertools import product
-from random import randint, shuffle
+from random import randint, randrange, shuffle
 
-def to_mountain_check(mat):
-    d = defaultdict(set)
-    highest = 0
-    for i in range(len(mat)):
-        for j in range(len(mat[0])):
-            if mat[i][j]:
-                d[mat[i][j]].add((i, j))
-                highest = max(highest, mat[i][j])
-    directions = list(product((-1, 0, 1), (-1, 0, 1)))
-    directions.pop(4)
-    while highest:
-        x, y = d[highest].pop()
-        for i, j in directions:
-            xi, yj = x+i, y+j
-            if 0<=xi<len(mat) and 0<=yj<len(mat[0]) and mat[xi][yj]<mat[x][y]-1:
-                if((xi, yj) in d[mat[xi][yj]]):
-                    d[mat[xi][yj]].remove((xi, yj))
-                mat[xi][yj] = mat[x][y]-1
-                d[mat[xi][yj]].add((xi, yj))
-        while highest and not d[highest]:
-            highest -= 1
-    return mat
-
-def random_mat(max_height, min_size, max_size):
-    rows, cols = randint(min_size, max_size), randint(min_size, max_size)
-    return [[randint(0, max_height) for i in range(cols)] for j in range(rows)]
-def copy_of(m):
-    return [[n for n in r] for r in m]
-
-@test.describe("Solution tests")
-def sol_test():
-    def act(input):
-        actual = to_mountain(copy_of(input))
-        expected = to_mountain_check(copy_of(input))
-        test.assert_equals(actual, expected, f"input: str(input)" if len(input)<10 else None)
-
+@test.describe("Example tests")
+def _():
     @test.it("Fixed tests")
-    def fixed_tests():
-        act([[1]])
-        act([[1, 1]])
-        act([[1, 2]])
-        act([[1, 3]])
-        act([[2, 2, 1, 2],[1, 0, 2, 1],[1, 0, 1, 2],[1, 2, 2, 1]])
-        act([[2, 2, 1, 2],[1, 0, 2, 1],[1, 0, 1, 2],[1, 2, 2, 4]])
-        act([[2, 2, 1, 2],[1, 0, 2, 1],[1, 0, 4, 2],[1, 2, 2, 4]])
-        act([[1, 2, 4, 2],[3, 3, 3, 4],[1, 2, 4, 2],[4, 4, 1, 3]])
+    def _():
+        test.assert_equals(to_mountain([[1]]), [[1]])
+        test.assert_equals(to_mountain([[1, 1]]), [[1, 1]])
+        test.assert_equals(to_mountain([[1, 2]]), [[1, 2]])
+        test.assert_equals(to_mountain([[1, 3]]), [[2, 3]])
+        test.assert_equals(to_mountain([[2, 2, 1, 2], [1, 0, 2, 1], [1, 0, 1, 2], [1, 2, 2, 1]]), [[2, 2, 1, 2], [1, 1, 2, 1], [1, 1, 1, 2], [1, 2, 2, 1]])
+        test.assert_equals(to_mountain([[2, 2, 1, 2], [1, 0, 2, 1], [1, 0, 1, 2], [1, 2, 2, 4]]), [[2, 2, 1, 2], [1, 2, 2, 2], [1, 2, 3, 3], [1, 2, 3, 4]])
+        test.assert_equals(to_mountain([[2, 2, 1, 2], [1, 0, 2, 1], [1, 0, 4, 2], [1, 2, 2, 4]]), [[2, 2, 2, 2], [2, 3, 3, 3], [2, 3, 4, 3], [2, 3, 3, 4]])
+        test.assert_equals(to_mountain([[1, 2, 4, 2], [3, 3, 3, 4], [1, 2, 4, 2], [4, 4, 1, 3]]), [[2, 3, 4, 3], [3, 3, 3, 4], [3, 3, 4, 3], [4, 4, 3, 3]])
 
-    @test.it("Random tests of small matrices (between 4 x 4 and 9 x 9) and small numbers (0 to 9)")
-    def random_test():
-        for i in range(9):
-            act(random_mat(4, 4, 9))
-            act(random_mat(9, 4, 9))
+@test.describe("Random tests")
+def _():
+    def check(input):
+        expected = to_mountain_check(input)
+        actual = to_mountain(input)
+        test.assert_equals(actual, expected)
 
-    @test.it("Random tests of big matrices (up to 99 x 99) and medium numbers (0 to 99)")
-    def random_test():
-        for i in range(9):
-            act(random_mat(9, 89, 99))
-            act(random_mat(99, 89, 99))
+    def to_mountain_check(mat):
+        mat = [[n for n in r] for r in mat]
+        d = defaultdict(set)
+        highest = 0
+        for i in range(len(mat)):
+            for j in range(len(mat[0])):
+                if mat[i][j]:
+                    d[mat[i][j]].add((i, j))
+                    highest = max(highest, mat[i][j])
+        directions = tuple((i, j) for i in range(-1, 2) for j in range(-1, 2) if i or j)
+        while highest and d:
+            x, y = d[highest].pop()
+            if not d[highest]:
+                d.pop(highest)
+            for i, j in directions:
+                xi, yj = x+i, y+j
+                if 0<=xi<len(mat) and 0<=yj<len(mat[0]) and mat[xi][yj]<mat[x][y]-1:
+                    if((xi, yj) in d[mat[xi][yj]]):
+                        d[mat[xi][yj]].remove((xi, yj))
+                        if not d[mat[xi][yj]]:
+                            d.pop(mat[xi][yj])
+                    mat[xi][yj] = mat[x][y]-1
+                    d[mat[xi][yj]].add((xi, yj))
+            while highest and d and highest not in d:
+                highest -= 1
+        return mat
 
-    @test.it("Random tests of big matrices (up to 99 x 99) and big numbers (up to 9999)")
-    def random_test():
-        for i in range(9):
-            act(random_mat(9999, 89, 99))
 
-    @test.it("Random tests of big matrices and all the numbers between 0 and 9801 shuffled")
-    def random_test():
-        for i in range(9):
-            random = list(range(9801))
-            shuffle(random)
-            random = [random[i:i+99] for i in range(0, len(random), 99)]
-            act(random)
+    def random_mat(l, h, V):
+        rows, cols = randint(l, h), randint(l, h)
+        return [[randrange(V) for _ in range(cols)] for _ in range(rows)]
 
-    @test.it("Random tests of big matrices and all different numbers in increasing order")
-    def random_test():
-        for i in range(9):
-            n = randint(0, 99)
-            random = [[n+i+99*j for i in range(99)] for j in range(99)]
-            act(random)
+    def spray(l, h, V=100, N=5, D=9000):
+        mat = random_mat(l, h, V)
+        for _ in range(N):
+            mat[randrange(len(mat))][randrange(len(mat[0]))] = D+randrange(200)
+        return mat
 
-#     @test.it("Random tests of big matrices with many small numbers and few medium numbers")
-#     def random_test():
-#         for i in range(4):
-#             random = random_mat(9, 79, 99)
-#             for h in range(randint(1, 9)):
-#                 for j in range(len(random)):
-#                     for k in range(len(random[0])):
-#                         random[j][k] = randint(1, 19)
-#             act(random)
+    def creep(l, h, V):
+        rows, cols = randint(l, h), randint(l, h)
+        mat = [[i+j+randrange(V) for j in range(cols)] for i in range(rows)]
+        if randrange(2): mat.reverse()
+        if randrange(2): mat = [row[::-1] for row in mat]
+        if randrange(2): mat = [*map(list, zip(*mat))]
+        return mat
 
-#     @test.it("Random tests of big matrices with many small numbers and few big numbers")
-#     def random_test():
-#         for i in range(4):
-#             random = random_mat(9, 79, 99)
-#             for h in range(randint(1, 2)):
-#                 for j in range(len(random)):
-#                     for k in range(len(random[0])):
-#                         random[j][k] = randint(79, 99)
-#             act(random)
+    @test.it("Easy tests")
+    def _():
+        tests = []
+        n = 10
+        tests.extend(random_mat(8, 12, 20) for _ in range(2*n))
+        tests.extend(spray(8, 12, 10, 3, 30) for _ in range(n))
+        tests.extend(creep(8, 12, 3) for _ in range(2*n))
+        shuffle(tests)
+        for matrix in tests:
+            check(matrix)
+
+    @test.it("Medium tests")
+    def _():
+        tests = []
+        n = 10
+        tests.extend(random_mat(30, 40, 100) for _ in range(n))
+        tests.extend(spray(30, 40) for _ in range(n))
+        tests.extend(creep(30, 40, 5) for _ in range(2*n))
+        shuffle(tests)
+        for matrix in tests:
+            check(matrix)
+
+    @test.it("Heavy tests")
+    def _():
+        tests = []
+        n = 12
+        tests.extend(random_mat(90,100,1000000000) for _ in range(n))
+        tests.extend(spray(90, 100) for _ in range(n))
+        tests.extend(creep(90, 100, 4) for _ in range(n))
+        shuffle(tests)
+        for matrix in tests:
+            check(matrix)
