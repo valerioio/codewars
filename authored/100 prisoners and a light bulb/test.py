@@ -8,17 +8,18 @@ def _():
     @test.it('Fixed test')
     def _():
         prisoners = solution.gather_and_discuss()
+        light_bulb = False
         assertion = False
-        for i in range(999999):
-            if prisoners[i % 100].enter_room():
-                assertion = True
-                test.expect(i >= 100)
+        for i in range(1, 29201):
+            light_bulb, assertion = prisoners[i % 100].enter_room(i, light_bulb)
+            if assertion:
+                test.expect(i > 100)
                 break
         test.expect(assertion)
 
 @test.describe('Attempt tests')
 def _():
-    @test.it('Cheating tests')
+    @test.it('Cheating tests') # probably most of these are not needed or to be fixed
     def _():
         prisoners = solution.gather_and_discuss()
         test.expect(isinstance(prisoners, tuple) and len(prisoners) == 100 and all(isinstance(p, solution.Prisoner) for p in prisoners),
@@ -27,53 +28,56 @@ def _():
                     "Prisoners should have two only attributes: a short string for the name and a small integer for the serial number.")
         test.expect(all(k in ('__module__', '__init__', '__dict__', '__weakref__', '__doc__') or callable(v) for k, v in vars(solution.Prisoner).items()),
                     'Prisoner should not have static properties')
-        test.expect(isinstance(solution.light_bulb, bool),
-                    'light_bulb should be a boolean')
-        test.expect(all(d in ('Prisoner', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'gather_and_discuss', 'light_bulb') for d in dir(solution)),
-                    'light_bulb, Prisoner and gather_and_discuss should be the only variables in the global environment')
+        test.expect(all(d in ('Prisoner', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'gather_and_discuss') for d in dir(solution)),
+                    'Prisoner and gather_and_discuss should be the only variables in the global environment')
         lines = inspect.getsource(solution)
-        test.expect(lines.count('global') == lines.count('global light_bulb'),
-                           'The solution code should use only one global variable for the light_bulb')
-        test.expect(not lines.count('nonlocal'),
-                           'The solution code should not use nonlocal variables')
-        entered = [False for _ in range(100)]
-        assertion = False
-        for i in range(999999):
-            r = randrange(100)
-            entered[r] = True
-            if i == 9:
-                test.expect(all(isinstance(p, solution.Prisoner) for p in prisoners),
-                            'gather_and_discuss should return a tuple of 100 prisoners')
-                test.expect(all(k in ('__module__', '__init__', '__dict__', '__weakref__', '__doc__') or callable(v) for k, v in vars(solution.Prisoner).items()),
-                            'Prisoner should not have static properties')
-                test.expect(isinstance(solution.light_bulb, bool),
-                            'light_bulb should be a boolean')
-                test.expect(all(d in ('Prisoner', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'gather_and_discuss', 'light_bulb') for d in dir(solution)),
-                            'light_bulb, Prisoner and gather_and_discuss should be the only variables in the global environment')
-            if prisoners[r].enter_room():
-                assertion = True
-                test.expect(all(entered))
-                break
-        test.expect(assertion)
+        test.expect(not lines.count('global') and not lines.count('nonlocal'),
+                    'The solution code should not use global or nonlocal variables')
+        light_bulb, assertion = prisoners[randrange(100)].enter_room(False, 1)
+        prisoners[randrange(100)].enter_room(light_bulb, 2)
+        test.expect(all(isinstance(p, solution.Prisoner) for p in prisoners),
+                    'gather_and_discuss should return a tuple of 100 prisoners')
+        test.expect(all(k in ('__module__', '__init__', '__dict__', '__weakref__', '__doc__') or callable(v) for k, v in vars(solution.Prisoner).items()),
+                    'Prisoner should not have static properties')
+        test.expect(all(d in ('Prisoner', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'gather_and_discuss') for d in dir(solution)),
+                    'Prisoner and gather_and_discuss should be the only variables in the global environment')
 
     @test.it("Random tests")
     def _():
         for _ in range(9):
             prisoners = solution.gather_and_discuss()
-            for i in range(99):
-                r = randrange(100)
-                if prisoners[r].enter_room():
-                    test.expect(False)
-                    break
-        for _ in range(9):
-            prisoners = solution.gather_and_discuss()
             entered = [False for _ in range(100)]
+            light_bulb = False
             assertion = False
-            for i in range(19999):
+            first_day = randrange(999999) # not sure about this
+            for i in range(first_day, first_day + 29200):
                 r = randrange(100)
                 entered[r] = True
-                if prisoners[r].enter_room():
-                    assertion = True
+                light_bulb, assertion = prisoners[r].enter_room(i, light_bulb)
+                if assertion:
                     test.expect(all(entered))
                     break
-            test.expect(assertion)
+            else:
+                test.expect(false)
+
+        for _ in range(9):
+            prisonerses = (solution.gather_and_discuss(), solution.gather_and_discuss())
+            entereds = ([False for _ in range(100)], [False for _ in range(100)])
+            assertions = [False, False]
+            light_bulbs = [False, False]
+            days = [1, 1]
+            b = randrange(1)
+            for _ in range(1, 99999): # amount of days to be fixed
+                r = randrange(100)
+                days[b] += 1
+                entereds[b][r] = True
+                light_bulbs[b], assertions[b] = prisonerses[b][r].enter_room(days[b], light_bulbs[b])
+                if assertions[b]:
+                    test.expect(all(entereds[b]))
+                    b ^= 1
+                if not any(assertions):
+                    b = randrange(1)
+                if all(assertions):
+                    break
+            else:
+                test.expect(false)

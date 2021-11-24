@@ -1,15 +1,11 @@
-light_bulb = False
-
 class Prisoner:
-    def __init__(self, name, serial):
+    def __init__(self, name, serial_number):
         self.name = name
-        self.serial = serial
-    def enter_room(self):
-        self.toggle()
-        return self.make_assertion()
+        self.serial_number = serial_number
+    def enter_room(self, light_bulb, current_day):
+        return self.toggle(), self.make_assertion()
     def toggle(self):
-        global light_bulb
-        light_bulb = not light_bulb
+        return not light_bulb
     def make_assertion(self):
         return False
 
