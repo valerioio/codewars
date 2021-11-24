@@ -8,9 +8,9 @@ def _():
         prisoners = gather_and_discuss()
         light_bulb = False
         assertion = False
-        for i in range(1, 29201):
-            light_bulb, assertion = prisoners[i % 100].enter_room(i, light_bulb):
+        for i in range(29200):
+            light_bulb, assertion = prisoners[i % 100].enter_room(light_bulb)
             if assertion:
-                test.expect(i > 100)
+                test.expect(i >= 100)
                 break
         test.expect(assertion)

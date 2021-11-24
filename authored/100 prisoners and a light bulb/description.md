@@ -5,7 +5,7 @@ There are 100 prisoners in solitary cells. There's a central living room with on
 Change the initial code to allow the prisoners to win their freedom. You can assume that the prisoners can count how may days have elapsed (it increases by 1 every time) and that the initial state of the light bulb is off (False).
 The code that you are given consists of:
 * a class ```Prisoner``` with some methods. You can rewrite this class, but the the class cannot have static attributes and:
-  * the constructor must take a string for the name (of length less than 1000) and an integer for the serial number (of value less than 1000);
+  * the constructor must take a string for the name (of length less than 1000) and an integer for the counter (of value less than 1000);
   * it has an ```enter_room``` method that takes in a boolean for the current state of the light bulb and an integer for the current day. It returns a tuple (an array in JavaScript) of two booleans, the first for the new state of the ligth bulb and the second one for the assertion;
 * a function```gather_and_discuss``` that returns a tuple (an array in JavaScript) of 100 objects of type ```Prisoner```.
 
@@ -20,7 +20,7 @@ An assertion can be made anytime between the 100th and the 29200th day.
 ### Note
 Review the following list when you get error messages from the anti-cheating tests:
 * **DO** return a tuple (an array in JavaScript) of 100 objects of type ```Prisoner``` from the ```gather_and_discuss``` function;
-* **DO** construct ```Prison``` objects just with a name of type ```str``` of length less than 1000, and a serial number of type ```int``` of value less than 1000;
+* **DO** construct ```Prison``` objects just with a name of type ```str``` of length less than 1000, and a counter of type ```int``` of value less than 1000;
 * **DO NOT** give static attributes to the ```Prisoner``` class;
 * **DO NOT** create other variables in the global environment besides ```Prisoner``` or ```gather_and_discuss```;
 * **DO NOT** use the ```global``` variables.

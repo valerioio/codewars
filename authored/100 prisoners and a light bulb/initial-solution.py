@@ -1,10 +1,10 @@
 class Prisoner:
-    def __init__(self, name, serial_number):
+    def __init__(self, name, counter):
         self.name = name
-        self.serial_number = serial_number
-    def enter_room(self, light_bulb, current_day):
-        return self.toggle(), self.make_assertion()
-    def toggle(self):
+        self.counter = counter
+    def enter_room(self, light_bulb):
+        return self.toggle(light_bulb), self.make_assertion()
+    def toggle(self, light_bulb):
         return not light_bulb
     def make_assertion(self):
         return False

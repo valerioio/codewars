@@ -1,14 +1,14 @@
 class Prisoner:
-    def __init__(self, name, serial_number):
+    def __init__(self, name, counter):
         self.name = name
-        self.serial_number = serial_number
-    def enter_room(self, light_bulb, current_day):
-        if self.name == 'beta' and not light_bulb and self.serial_number:
-            self.serial_number -= 1
+        self.counter = counter
+    def enter_room(self, light_bulb):
+        if self.name == 'beta' and not light_bulb and self.counter:
+            self.counter -= 1
             light_bulb = True
         elif self.name == 'alpha' and light_bulb:
-            self.serial_number -= 1
-            return False, not self.serial_number
+            self.counter -= 1
+            return False, not self.counter
         return light_bulb, False
 
 def gather_and_discuss():
