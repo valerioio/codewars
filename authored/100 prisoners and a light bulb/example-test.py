@@ -13,6 +13,6 @@ def _():
             lightbulb, assertion = living_room(i % 100, lightbulb, prisoners[i % 100])
             prisoners[i % 100] = (*prisoners[i % 100], light_before)
             if assertion:
-                test.expect(i >= 100, 'One of the prisoners made a false assertion')
+                test.expect(i >= 99, 'One of the prisoners made a false assertion')
                 break
         test.expect(assertion, 'The prisoners waited too long to make an assertion')
