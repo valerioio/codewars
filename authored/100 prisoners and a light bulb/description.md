@@ -28,10 +28,10 @@ If an assertion is:
 * made at or after the 100th day, the prisoners are set free;
 * not made after 80 years (29200 days), the prisoners are shot.
 
-### Note
+### Notes
 * do not use other variables in the global scope
 * do not rename ```living_room```
 
 ### Constraints
-* the prisoners have at least 29200 days to make an assertion
+* the prisoners have 29200 days to make an assertion
 * the initial state of the light bulb is off (False)
