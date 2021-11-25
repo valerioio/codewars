@@ -27,15 +27,19 @@ def _():
         prisoners = [() for _ in range(100)]
         lightbulb = False
         assertion = False
+        names_in_scope = ('living_room', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__')
+        locals = '<locals>'
         for _ in range(29200):
-            if not randrange(99) and not all(d in ('living_room', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__') for d in dir(solution)):
+            if not all(d in names_in_scope for d in dir(solution)):
                 test.fail('living_room should be the only name in the global scope')
+            if locals in str(vars(solution)['living_room']):
+                test.fail('living_room should not be a closure')
             r = randrange(100)
             light_before = lightbulb
             lightbulb, assertion = solution.living_room(r, lightbulb, prisoners[r])
-            if(not isinstance(lightbulb, bool) or not isinstance(assertion, bool)):
-                test.fail('living_room should return to booleans')
             prisoners[r] = (*prisoners[r], light_before)
+            if(not isinstance(lightbulb, bool) or not isinstance(assertion, bool)):
+                test.fail('living_room should return two booleans')
             if assertion:
                 break
 
@@ -46,13 +50,14 @@ def _():
             skip = randrange(100)
             for _ in range(29200):
                 r = randrange(100)
-                if r == skip:
-                    r = (r + 1) % 100
                 light_before = lightbulb
-                lightbulb, assertion = solution.living_room(r, lightbulb, prisoners[r])
-                prisoners[r] = (*prisoners[r], light_before)
+                light_and_assertion = solution.living_room(r, lightbulb, prisoners[r])
+                if r != skip:
+                    lightbulb, assertion = light_and_assertion
+                    prisoners[r] = (*prisoners[r], light_before)
                 if assertion:
                     test.fail('One of the prisoners made a false assertion')
+                    break
 
         test.pass_()
 
@@ -64,7 +69,7 @@ def _():
             assertions = [False, False]
             entered = [[False for _ in range(100)], [False for _ in range(100)]]
             days = [0, 0]
-            b = randrange(1)
+            b = randrange(2)
             for _ in range(99999):
                 r = randrange(100)
                 light_before = lightbulbs[b]
@@ -77,7 +82,7 @@ def _():
                                 'One of the prisoners made a false assertion')
                     b ^= 1
                 if not any(assertions):
-                    b = randrange(1)
+                    b = randrange(2)
                 if all(assertions):
                     break
             test.expect(all(d < 29200 for d in days),
