@@ -12,7 +12,7 @@ A test will fail if:
 ### Input
 * an integer between 0 and 99 for the prisoner number
 * a boolean for the current state of the light bulb
-* a tuple of boolean that represents the states of the light bulb during the previous visits of the prisoner in the room (when they go in, before changing it)
+* an array of booleans that represents the states of the light bulb during the previous visits of the prisoner in the room (when they go in, before changing it)
 
 ### Output
 * a boolean for the new state of the light bulb
@@ -21,7 +21,7 @@ A test will fail if:
 ### Example
 In the example test the prisoners are taken in the room in order, from first to last, and then the cycle repeats.
 
-For example, prisoner #0 goes in on day 1, when the lightbulb off and they have no previous visits, and then again on day 101, finding the lightbulb in whatever state was left by prisoner #99, and with ```previous_visits == tuple(False)```.
+For example, prisoner #0 goes in on day 1, when the lightbulb off and they have no previous visits, and then again on day 101, finding the lightbulb in whatever state was left by prisoner #99, and with ```previous_visits == [False]```.
 
 If an assertion is:
 * made before the 100th day, the prisoners are shot;
