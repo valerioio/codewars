@@ -37,6 +37,9 @@ def _():
             if not all(d in names_in_scope for d in dir(solution)):
                 passed = False
                 test.fail('living_room should be the only name in the global scope')
+            if vars(solution.living_room):
+                passed = False
+                test.fail('living_room should not have attributes')
             if locals in str(vars(solution)['living_room']):
                 passed = False
                 test.fail('living_room should not be a closure')
