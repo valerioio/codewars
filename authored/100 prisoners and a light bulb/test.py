@@ -28,6 +28,7 @@ def _():
     @test.it('Cheating tests')
     def _():
         passed = True
+        message = ''
         prisoners = [[] for _ in range(100)]
         lightbulb = False
         assertion = False
@@ -36,24 +37,26 @@ def _():
         for _ in range(29200):
             if not all(d in names_in_scope for d in dir(solution)):
                 passed = False
-                test.fail('living_room should be the only name in the global scope')
+                message = 'living_room should be the only name in the global scope'
             if vars(solution.living_room):
                 passed = False
-                test.fail('living_room should not have attributes')
+                message = 'living_room should not have attributes'
             if locals in str(vars(solution)['living_room']):
                 passed = False
-                test.fail('living_room should not be a closure')
+                message = 'living_room should not be a closure'
             r = randrange(100)
             light_before = lightbulb
             lightbulb, assertion = solution.living_room(r, lightbulb, prisoners[r])
             prisoners[r].append(light_before)
             if(not isinstance(lightbulb, bool) or not isinstance(assertion, bool)):
                 passed = False
-                test.fail('living_room should return two booleans')
+                message = 'living_room should return two booleans'
             if assertion:
                 break
         if passed:
             test.pass_()
+        else:
+            test.fail(message)
 
     @test.it("Random tests")
     def _():
